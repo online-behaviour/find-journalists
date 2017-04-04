@@ -19,9 +19,9 @@ import definitions
 # constants
 COMMAND = sys.argv[0]
 # maximum id of tweet, start of backwards search; empty value: -1
-MAXID = 848776835026608128
+MAXID = 848626338844090373 # 20170402 22:01
 # minimum id of tweet; empty value: -1
-MINID = 848776800000000000
+MINID = 848610736943374336 # 20170402 20:59
 # stop the program after this many warnings
 MAXWARNINGS =  50
 # maximum count for remaining Twitter requests
@@ -66,6 +66,8 @@ def main():
     while i+1 < len(twiqsTrack):
         # create the query: add first word
         query = twiqsTrack[i]
+        # keep initial value of i for log messages
+        startI = i
         # increment index pointer
         i += 1
         # add more words to the query, when available and 
@@ -120,7 +122,7 @@ def main():
                 # process the tweets in the results
                 for tweet in results["statuses"]:
                     # print the tweet in json format
-                    print json.dumps(tweet)
+                    print json.dumps(tweet,sort_keys=True)
                     # get the id of this tweet
                     thisId = tweet["id"]
                     # get the time stamp of this tweet
@@ -131,11 +133,11 @@ def main():
                 # decrease maxId to avoid fetching the same tweet
                 maxId -= 1
                 # log message
-                sys.stderr.write(str(runCounter)+" "+str(maxId)+" "+maxTime+"\n")
+                sys.stderr.write(str(startI)+"."+str(runCounter)+" "+str(maxId)+" "+maxTime+"\n")
                 # decrement remaining counter
                 remaining -= 1
                 # check if we can still access the api
-                if remaining < 1: remaining = checkRemaining(t,apigroup,api)
+                if remaining < 1: remaining = checkRemaining(t,APIGROUP,API)
 
 # default action on script call: run main function
 if __name__ == "__main__":
