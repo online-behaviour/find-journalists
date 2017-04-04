@@ -84,6 +84,8 @@ def main():
         minId = MINID
         # run counter initialization
         runCounter = 0
+        # remmeber which tweets have been collected
+        seen = {}
         # repeat while tweets found
         while "statuses" in results and len(results["statuses"]) > 0:
             # empty results list
@@ -121,8 +123,6 @@ def main():
                 maxTime = ""
                 # process the tweets in the results
                 for tweet in results["statuses"]:
-                    # print the tweet in json format
-                    print json.dumps(tweet,sort_keys=True)
                     # get the id of this tweet
                     thisId = tweet["id"]
                     # get the time stamp of this tweet
@@ -130,6 +130,12 @@ def main():
                     if maxId < 0 or thisId < maxId:
                         maxId = thisId
                         maxTime = time
+                    # only print each tweet once
+                    if not thisId in seen:
+                        # print the tweet in json format
+                        print json.dumps(tweet,sort_keys=True)
+                        # add tweet id to seen dictionary
+                        seen[thisId] = True
                 # decrease maxId to avoid fetching the same tweet
                 maxId -= 1
                 # log message
