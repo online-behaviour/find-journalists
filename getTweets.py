@@ -62,6 +62,8 @@ def main():
     t = Twitter(auth=OAuth(token, token_secret, consumer_key, consumer_secret))
     # start with this element of the query list
     i = 0
+    # remmeber which tweets have been collected
+    seen = {}
     # repeat while there are unprocessed query words
     while i+1 < len(twiqsTrack):
         # create the query: add first word
@@ -84,8 +86,6 @@ def main():
         minId = MINID
         # run counter initialization
         runCounter = 0
-        # remmeber which tweets have been collected
-        seen = {}
         # repeat while tweets found
         while "statuses" in results and len(results["statuses"]) > 0:
             # empty results list
