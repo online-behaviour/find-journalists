@@ -19,9 +19,9 @@ import definitions
 # constants
 COMMAND = sys.argv[0]
 # maximum id of tweet, start of backwards search; empty value: -1
-MAXID = 848626338844090373 # 20170402 22:01
+MAXID = 810983045557850116 # 20151216
 # minimum id of tweet; empty value: -1
-MINID = 848610736943374336 # 20170402 20:59
+MINID = 810983045557000000
 # stop the program after this many warnings
 MAXWARNINGS =  50
 # maximum count for remaining Twitter requests

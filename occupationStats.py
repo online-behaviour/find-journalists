@@ -17,6 +17,8 @@ TARGET = "journalist"
 OTHER = "other"
 # number of values to use with smoothing
 MAXSMOOTH = 15
+# number of seed users
+NBROFSEEDS = 270.0
 
 # counts
 counts = {}
@@ -49,7 +51,7 @@ for count in sorted(counts):
      smooth = 0
      for s in smoothHistory: smooth += s
      smooth /= len(smoothHistory)
-     print "%s %0.1f %0.1f" % (count,value,smooth)
+     print "%0.1f %0.1f %0.1f" % (100*count/NBROFSEEDS,value,smooth)
 
 # done
 sys.exit()
