@@ -1,10 +1,11 @@
 #!/usr/bin/python
 """
 getTweets.py: get recent tweets from Twitter within certain time frame
-usage: ./getTweets > file
+usage: ./getTweets -n MINIMUMID -x MAXIMUMID > file
 20170309 erikt(at)xs4all.nl
 """
 
+import getopt
 import json
 import operator
 import re
@@ -17,11 +18,12 @@ from twitter import *
 import definitions
 
 # constants
-COMMAND = sys.argv[0]
+COMMAND = sys.argv.pop(0)
+USAGE = "usage: "+COMMAND+" -n MINIMUMID -x MAXIMUMID > file"
 # maximum id of tweet, start of backwards search; empty value: -1
-MAXID = 810983045557850116 # 20151216
+maxId = -1 # 20151216
 # minimum id of tweet; empty value: -1
-MINID = 810983045557000000
+minId = -1
 # stop the program after this many warnings
 MAXWARNINGS =  50
 # maximum count for remaining Twitter requests
@@ -49,7 +51,7 @@ def checkRemaining(t,apigroup,api):
         remaining = rates['resources'][apigroup][api]['remaining']
     return(remaining)
 
-def main():
+def main(argv):
     # Twitter autnetication keys
     token = definitions.token
     token_secret = definitions.token_secret
@@ -57,6 +59,18 @@ def main():
     consumer_secret = definitions.consumer_secret
     # warning count
     nbrOfWarnings = 0
+    # process command line options
+    try: options = getopt.getopt(argv,"n:x:",[])
+    except: sys.exit(USAGE)
+    for option in options[0]:
+        if option[0] == "-n": 
+            try: minId = int(option[1])
+            except: sys.exit(COMMAND+": "+option[1]+" is not a number")
+        elif option[0] == "-x": 
+            try: maxId = int(option[1])
+            except: sys.exit(COMMAND+": "+option[1]+" is not a number")
+        else: sys.exit(USAGE)
+    if minId > maxId: sys.exit(COMMAND+": requested minimum id is larger than maximum id")
 
     # authenticate
     t = Twitter(auth=OAuth(token, token_secret, consumer_key, consumer_secret))
@@ -81,9 +95,6 @@ def main():
         remaining = checkRemaining(t,APIGROUP,API)
         # start with dummy element in results list
         results = { "statuses" : [ "dummy "] }
-        # set initial ids for backward search: start from maxId, stop at minId
-        maxId = MAXID
-        minId = MINID
         # run counter initialization
         runCounter = 0
         # repeat while tweets found
@@ -147,4 +158,4 @@ def main():
 
 # default action on script call: run main function
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(main(sys.argv))
