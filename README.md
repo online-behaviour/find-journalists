@@ -7,7 +7,7 @@ Media](https://www.esciencecenter.nl/project/automated-analysis-of-online-behavi
 a cooperation of the University of Groningen and the
 Netherlands eScience Center. The main project software
 repository is called [machine
-learning](https://github.com/online-behaviour/machine-learning)
+learning](https://github.com/online-behaviour/machine-learning).
 
 The goal of the project is to analyze tweets of politicians
 and political journalists. Names of relevant politicians can
