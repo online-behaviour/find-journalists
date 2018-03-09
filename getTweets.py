@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python2
 """
 getTweets.py: get recent tweets from Twitter within certain time frame
 usage: ./getTweets -n MINIMUMID -x MAXIMUMID > file

@@ -1,7 +1,24 @@
-# journalists code
+# Finding journalists in the project Online Behaviour
+[![DOI](https://zenodo.org/badge/87090173.svg)](https://zenodo.org/badge/latestdoi/87090173)
 
-Software for discovering Twitter accounts of political
-journalists given accounts of politicians.
+This directory contains software developed in the pilot of
+the project [Automated Analysis of Online Behaviour on
+Social
+Media](https://www.esciencecenter.nl/project/automated-analysis-of-online-behaviour-on-social-media),
+a cooperation of the University of Groningen and the
+Netherlands eScience Center. The main project software
+repository is called [machine
+learning](https://github.com/online-behaviour/machine-learning).
+
+The goal of the project is to analyze tweets of politicians
+and political journalists. Names of relevant politicians can
+be collected from documents like parliament member lists
+and ballots but it is much harder to find the names of
+relevant journalists. The software in this directory aims to
+find such journalists by examining the follower links
+between politicians and other users on Twitter.
+
+## Usage
 
 Run like:
 
@@ -21,8 +38,10 @@ consumer_key = "???"
 consumer_secret = "???"
 ```
 
-Replace the strings "???" with the key information from 
-https://apps.twitter.com , see https://www.slickremix.com/docs/how-to-get-api-keys-and-tokens-for-twitter/ for instructions
+Replace the strings "???" with the key information from
+https://apps.twitter.com , see
+https://www.slickremix.com/docs/how-to-get-api-keys-and-tokens-for-twitter/
+for instructions
 
 In order to find more relevant users, you can run this command 
 after getFollowers.py is finished:
