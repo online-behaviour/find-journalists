@@ -13,7 +13,7 @@ import sys
 # constants
 COMMAND = sys.argv[0]
 # hours to subtract/add to get real time from GMT in tweets
-DELTAHOURS = 1
+DELTAHOURS = 2
 # list with open file handles
 files = {}
 # tweet id list
