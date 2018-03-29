@@ -1,4 +1,4 @@
-# Finding journalists in the project Online Behaviour
+# Lysander: Finding political journalists on Twitter
 [![DOI](https://zenodo.org/badge/87090173.svg)](https://zenodo.org/badge/latestdoi/87090173)
 
 This directory contains software developed in the pilot of
