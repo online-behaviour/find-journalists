@@ -59,8 +59,10 @@ for line in sys.stdin:
         if not thisFile in files:
             outFile = open(thisFile,"w")
             files[thisFile] = outFile
+        else: outFile = open(thisFile,"a")
         # write the tweet to the file
-        files[thisFile].write(line+"\n")
+        outFile.write(line+"\n")
+        # close all file handles
+        outFile.close()
 
-# done: close all file handles
-for fileName in files: files[fileName].close()
+# done
