@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 """
 getTweets.py: get recent tweets from Twitter within certain time frame
 usage: ./getTweets -n MINIMUMID -x MAXIMUMID > file
@@ -20,10 +20,10 @@ import definitions
 # constants
 COMMAND = sys.argv.pop(0)
 USAGE = "usage: "+COMMAND+" -n MINIMUMID -x MAXIMUMID > file"
-# maximum id of tweet, start of backwards search; empty value: -1
-maxId = -1 # 20151216
-# minimum id of tweet; empty value: -1
-minId = -1
+NL = "nl"
+LANG = "lang"
+SINCEID = "since_id"
+MAXID = "max_id"
 # stop the program after this many warnings
 MAXWARNINGS =  50
 # maximum count for remaining Twitter requests
@@ -35,8 +35,17 @@ API = "/"+APIGROUP+"/tweets"
 # maximum length of query in characters
 MAXQUERY = 360
 # if the query is too long, Twitter will fail with error missing url parameter
-# twiqsTrack: list of twiqs track queries
-twiqsTrack = ["een","het","ik","niet","maar","voor","ook","als","heb","naar","nog","echt","moet","weer","mijn","zijn","bij","jij","toch","lekker","geen","gewoon","gaat","meer","slapen","weet","mensen","alleen","kijken","leren","heeft","vandaag","eens","hoor","uur","jou","veel","denk","maken","leuk","heel","zou","daar","komt","eten","iets","vind","hebben","altijd","vanavond","jullie","thuis","iemand","helemaal","waar","waarom","wakker","komen","beetje","nieuwe","worden","steeds","gezellig","straks","kunnen","zeggen","iedereen","ofzo","omdat","werken","allemaal","moeten","andere","jaar","terug","staat","kut","ging","erg","zien","vroeg","bijna","zelf","zegt","vrij","zeker","werk","#gtst","#tienerthings","#bzv","#wiedoethet","#durftevragen","#nieuws","#tienerfeiten","#dutchteenagers","#dwdd","#penw","#widm","#slajezelf","#voetbalfans","#pownews","#geenzin","#slapen","#lekker","#rtl7","informatiekunde","infokunde","op","wel","zo","aan","gaan","wil","doen","mij","dus","uit","morgen","goed","wie","dit","hij","hier","nou","bent","zit","zin","rug","niks","dag","laat","weg","alles","doet","hem","tegen","deze","haar","zie","anders","zeg","huis","zal","jaa","nooit","tijd","hou","klaar","keer","wordt","hele","wij","snel","hebt","vakantie","kijk","beter","mooi","ons","eerst","toen","krijg","gwn","moeder","slaap","dood","weten","leven","gedaan","dingen","dacht","halen","leuke","eigenlijk","maakt","hoop","volgens","schatje","laatste","zitten","gelukkig","gezien","misschien","eindelijk","stad","gehad","buiten","zei","wanneer","geweest","daarna","wachten","haat","zonder","verder","lief","maandag","blij","egt","staan","binnen","eerste","paar","laten","soms","beneden","alweer","niemand","voel","kamer","dagen","zaterdag","enzo","mooie","onder","gelijk","praten","onze","wilt","moest","volgende","maak","willen","gemaakt","lieve","achter","nodig","kapot","wereld"]
+# file with query words
+TRACKFILE = "/home/cloud/etc/track.20200612.unsorted"
+# maximum number of tweets to fetch with one query
+MAXTWEETCOUNT = 100
+
+def readTrack():
+    inFile = open(TRACKFILE,"r")
+    line = re.sub(r"track *= *","",inFile.read().strip())
+    twiqsTrack = line.split(",")
+    inFile.close()
+    return(twiqsTrack)
 
 def checkRemaining(t,apigroup,api):
     # check the rate limit; if 0 then wait
@@ -52,6 +61,10 @@ def checkRemaining(t,apigroup,api):
     return(remaining)
 
 def main(argv):
+    # maximum id of tweet, start of backwards search; empty value: -1
+    maxId = -1 # 20151216
+    # minimum id of tweet; empty value: -1
+    minId = -1
     # Twitter autnetication keys
     token = definitions.token
     token_secret = definitions.token_secret
@@ -78,10 +91,15 @@ def main(argv):
     i = 0
     # remmeber which tweets have been collected
     seen = {}
+    # twiqsTrack: list of twiqs track queries
+    twiqsTrack = readTrack()
     # repeat while there are unprocessed query words
     while i+1 < len(twiqsTrack):
         # create the query: add first word
-        query = twiqsTrack[i]
+        query = "{0}:{1}".format(LANG,NL)
+        if minId >= 0: query += " {0}:{1}".format(SINCEID,str(minId))
+        if maxId >= 0: query += " {0}:{1}".format(MAXID,str(maxId))
+        query += " "+twiqsTrack[i]
         # keep initial value of i for log messages
         startI = i
         # increment index pointer
@@ -104,22 +122,15 @@ def main(argv):
             # increase run counter
             runCounter += 1
             # get tweets from Twitter
-            try:
-                if maxId < 0 and minId < 0:
-                    # query arguments: https://dev.twitter.com/rest/reference/get/search/tweets
-                    results = t.search.tweets(q = query, lang = "nl", count = 100)
-                elif maxId < 0 and minId >= 0:
-                    results = t.search.tweets(q = query, lang = "nl", count = 100, since_id = minId)
-                elif maxId >= 0 and minId < 0:
-                    results = t.search.tweets(q = query, lang = "nl", count = 100, max_id = maxId)
-                elif maxId >= 0 and minId >= 0:
-                    results = t.search.tweets(q = query, lang = "nl", count = 100, max_id = maxId, since_id = minId)
-                else:
-                    sys.exit(COMMAND+": cannot happen\n")
-            except TwitterHTTPError as e:
-                # if there is an error: report this
-                sys.stderr.write("error: "+str(e))
-                nbrOfWarnings += 1
+            #try:
+            if True:
+                # query arguments: https://dev.twitter.com/rest/reference/get/search/tweets
+                #results = t.search.tweets(q = "de OR het OR een"+" lang:"+NL+" since:2020-06-08 until:2020-06-09", count = MAXTWEETCOUNT)
+                results = t.search.tweets(q = query, count = MAXTWEETCOUNT)
+            #except TwitterHTTPError as e:
+            #    # if there is an error: report this
+            #    sys.stderr.write("error: "+str(e))
+            #    nbrOfWarnings += 1
             # stop if there were too many errors
             if nbrOfWarnings >= MAXWARNINGS:
                 sys.exit(COMMAND+": too many warnings: "+nbrOfWarnings+"\n")
@@ -144,11 +155,15 @@ def main(argv):
                     # only print each tweet once
                     if not thisId in seen:
                         # print the tweet in json format
-                        print json.dumps(tweet,sort_keys=True)
+                        print(json.dumps(tweet,sort_keys=True))
                         # add tweet id to seen dictionary
                         seen[thisId] = True
                 # decrease maxId to avoid fetching the same tweet
                 maxId -= 1
+                if not re.search(MAXID,query): 
+                    print("expected call with maxId in query!")
+                    exit(1)
+                query = re.sub(MAXID+":"+r"[0-9]+",MAXID+":"+str(maxId),query)
                 # log message
                 sys.stderr.write(str(startI)+"."+str(runCounter)+" "+str(maxId)+" "+maxTime+"\n")
                 # decrement remaining counter
