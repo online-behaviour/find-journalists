@@ -62,10 +62,10 @@ def checkRemaining(t,apigroup,api):
 
 def main(argv):
     # maximum id of tweet, start of backwards search; empty value: -1
-    maxId = -1 # 20151216
+    maxIdGlobal = -1 # 20151216
     # minimum id of tweet; empty value: -1
     minId = -1
-    # Twitter autnetication keys
+    # Twitter authentication keys
     token = definitions.token
     token_secret = definitions.token_secret
     consumer_key =  definitions.consumer_key
@@ -80,10 +80,10 @@ def main(argv):
             try: minId = int(option[1])
             except: sys.exit(COMMAND+": "+option[1]+" is not a number")
         elif option[0] == "-x": 
-            try: maxId = int(option[1])
+            try: maxIdGlobal = int(option[1])
             except: sys.exit(COMMAND+": "+option[1]+" is not a number")
         else: sys.exit(USAGE)
-    if minId > maxId: sys.exit(COMMAND+": requested minimum id is larger than maximum id")
+    if minId > maxIdGlobal: sys.exit(COMMAND+": requested minimum id is larger than maximum id")
 
     # authenticate
     t = Twitter(auth=OAuth(token, token_secret, consumer_key, consumer_secret))
@@ -95,6 +95,8 @@ def main(argv):
     twiqsTrack = readTrack()
     # repeat while there are unprocessed query words
     while i+1 < len(twiqsTrack):
+        # reset maxId
+        maxId = maxIdGlobal
         # create the query: add first word
         query = "{0}:{1}".format(LANG,NL)
         if minId >= 0: query += " {0}:{1}".format(SINCEID,str(minId))
@@ -105,8 +107,8 @@ def main(argv):
         # increment index pointer
         i += 1
         # add more words to the query, when available and 
-        #     when query is not too long; 8 is length of %20OR%20
-        while i+1 < len(twiqsTrack) and len(query)+8+len(twiqsTrack[i]) < MAXQUERY:
+        #     when query is not too long;
+        while i+1 < len(twiqsTrack) and len(query)+len("%20OR%20")+len(twiqsTrack[i]) < MAXQUERY:
             query += "%20OR%20"+twiqsTrack[i]
             i += 1
         # check if we can access the api at Twitter, wait if necessary
