@@ -1,5 +1,6 @@
 # Lysander: Finding political journalists on Twitter
 [![DOI](https://zenodo.org/badge/87090173.svg)](https://zenodo.org/badge/latestdoi/87090173)
+[![Research Software Directory](https://img.shields.io/badge/rsd-Research%20Software%20Directory-00a3e3.svg)](https://research-software.nl/software/finding-journalists)
 
 This directory contains software developed in the pilot of
 the project [Automated Analysis of Online Behaviour on
